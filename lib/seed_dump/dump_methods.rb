@@ -2,12 +2,12 @@ class SeedDump
   module DumpMethods
     include Enumeration
 
-    def dump(records, options = {})
+    def dump(records, **options)
       return nil if records.count == 0
 
       io = open_io(options)
 
-      write_records_to_io(records, io, options)
+      write_records_to_io(records, io, **options)
 
       ensure
         io.close if io.present?
@@ -15,14 +15,14 @@ class SeedDump
 
     private
 
-    def dump_record(record, options)
+    def dump_record(record, **options)
       attribute_strings = []
 
       # We select only string attribute names to avoid conflict
       # with the composite_primary_keys gem (it returns composite
       # primary key attribute names as hashes).
       record.attributes.select {|key| key.is_a?(String) || key.is_a?(Symbol) }.each do |attribute, value|
-        attribute_strings << dump_attribute_new(attribute, value, options) unless options[:exclude].include?(attribute.to_sym)
+        attribute_strings << dump_attribute_new(attribute, value, **options) unless options[:exclude].include?(attribute.to_sym)
       end
 
       open_character, close_character = options[:import] ? ['[', ']'] : ['{', '}']
@@ -30,20 +30,20 @@ class SeedDump
       "#{open_character}#{attribute_strings.join(", ")}#{close_character}"
     end
 
-    def dump_attribute_new(attribute, value, options)
+    def dump_attribute_new(attribute, value, **options)
       options[:import] ? value_to_s(value) : "#{attribute}: #{value_to_s(value)}"
     end
 
     def value_to_s(value)
       value = case value
               when BigDecimal, IPAddr
-                value.to_s
+                value.to_fs
               when Date, Time, DateTime
-                value.to_s(:db)
+                value.to_fs(:db)
               when Range
                 range_to_string(value)
               when ->(v) { v.class.ancestors.map(&:to_s).include?('RGeo::Feature::Instance') }
-                value.to_s
+                value.to_fs
               else
                 value
               end
@@ -67,7 +67,7 @@ class SeedDump
       end
     end
 
-    def write_records_to_io(records, io, options)
+    def write_records_to_io(records, io, **options)
       options[:exclude] ||= [:id, :created_at, :updated_at]
 
       method = options[:import] ? 'import' : 'create!'
@@ -83,7 +83,7 @@ class SeedDump
                              :enumerable_enumeration
                            end
 
-      send(enumeration_method, records, io, options) do |record_strings, last_batch|
+      send(enumeration_method, records, io, **options) do |record_strings, last_batch|
         io.write(record_strings.join(",\n  "))
 
         io.write(",\n  ") unless last_batch

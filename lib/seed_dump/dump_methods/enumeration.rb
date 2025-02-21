@@ -1,18 +1,17 @@
 class SeedDump
   module DumpMethods
     module Enumeration
-      def active_record_enumeration(records, io, options)
+      def active_record_enumeration(records, io, **options)
         # If the records don't already have an order,
         # order them by primary key ascending.
         if !records.respond_to?(:arel) || records.arel.orders.blank?
           records.order("#{records.quoted_table_name}.#{records.quoted_primary_key} ASC")
         end
 
-        num_of_batches, batch_size, last_batch_size = batch_params_from(records, options)
+        num_of_batches, batch_size, last_batch_size = batch_params_from(records: records, options: options)
 
         # Loop through each batch
         (1..num_of_batches).each do |batch_number|
-
           record_strings = []
 
           last_batch = (batch_number == num_of_batches)
@@ -25,22 +24,21 @@ class SeedDump
 
           # Loop through the records of the current batch
           records.offset((batch_number - 1) * batch_size).limit(cur_batch_size).each do |record|
-            record_strings << dump_record(record, options)
+            record_strings << dump_record(record, **options)
           end
 
           yield record_strings, last_batch
         end
       end
 
-      def enumerable_enumeration(records, io, options)
-        num_of_batches, batch_size = batch_params_from(records, options)
+      def enumerable_enumeration(records, io, **options)
+        num_of_batches, batch_size, _ = batch_params_from(records: records, options: options)
 
         record_strings = []
-
         batch_number = 1
 
         records.each_with_index do |record, i|
-          record_strings << dump_record(record, options)
+          record_strings << dump_record(record, **options)
 
           last_batch = (i == records.length - 1)
 
@@ -53,7 +51,7 @@ class SeedDump
         end
       end
 
-      def batch_params_from(records, options)
+      def batch_params_from(records:, options:)
         batch_size = batch_size_from(records, options)
 
         count = records.count

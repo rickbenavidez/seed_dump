@@ -50,23 +50,20 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>.freeze, [">= 4"])
       s.add_runtime_dependency(%q<activerecord>.freeze, [">= 4"])
-      s.add_development_dependency(%q<byebug>.freeze, ["~> 2.0"])
-      s.add_development_dependency(%q<factory_bot>.freeze, ["~> 4.8.2"])
+      s.add_development_dependency(%q<factory_bot>.freeze, ["~> 6.5"])
       s.add_development_dependency(%q<activerecord-import>.freeze, ["~> 0.4"])
       s.add_development_dependency(%q<jeweler>.freeze, ["~> 2.0"])
     else
       s.add_dependency(%q<activesupport>.freeze, [">= 4"])
       s.add_dependency(%q<activerecord>.freeze, [">= 4"])
-      s.add_dependency(%q<byebug>.freeze, ["~> 2.0"])
-      s.add_dependency(%q<factory_bot>.freeze, ["~> 4.8.2"])
+      s.add_dependency(%q<factory_bot>.freeze, ["~> 6.5"])
       s.add_dependency(%q<activerecord-import>.freeze, ["~> 0.4"])
       s.add_dependency(%q<jeweler>.freeze, ["~> 2.0"])
     end
   else
     s.add_dependency(%q<activesupport>.freeze, [">= 4"])
     s.add_dependency(%q<activerecord>.freeze, [">= 4"])
-    s.add_dependency(%q<byebug>.freeze, ["~> 2.0"])
-    s.add_dependency(%q<factory_bot>.freeze, ["~> 4.8.2"])
+    s.add_dependency(%q<factory_bot>.freeze, ["~> 6.5"])
     s.add_dependency(%q<activerecord-import>.freeze, ["~> 0.4"])
     s.add_dependency(%q<jeweler>.freeze, ["~> 2.0"])
   end

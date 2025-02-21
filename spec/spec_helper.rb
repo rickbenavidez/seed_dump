@@ -5,8 +5,6 @@ require 'active_record'
 
 require 'tempfile'
 
-require 'byebug'
-
 require 'database_cleaner'
 require 'factory_bot'
 
